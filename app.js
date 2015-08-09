@@ -44,7 +44,9 @@ app.get('/redirect', function(req, res) {
 
   // get our authorization code
   _mshAuthCode = req.query.code;
-  console.log("MSH API Authorization Code:  " + _mshAuthCode);
+  
+  // console.log("MSH API Authorization Code:  " + _mshAuthCode);
+  console.log("Redirecting...");
 
   // set-up an object to use for our POST to MSH API for the authorization token
   var requestObject = {
@@ -75,12 +77,12 @@ app.get('/redirect', function(req, res) {
 
   request(options, function (error, response, body) {
     if (!error) {
-      console.log('Our body is: ' + body);
+      // console.log('Our body is: ' + body);
       
       body = JSON.parse(body);
       
       var accessToken = body.access_token;
-      console.log('accessToken: ' + accessToken);
+      // console.log('accessToken: ' + accessToken);
       
       res.cookie('accessToken', accessToken, { });
       res.redirect('/mshWDC.html');
