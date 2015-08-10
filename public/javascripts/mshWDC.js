@@ -1,67 +1,3 @@
-// -------------------------------------------------- //
-// WDC-specific things
-// -------------------------------------------------- //
-var myConnector = tableau.makeConnector();
-console.log('here');
-
-myConnector.init = function() {
-	console.log('init');
-	var accessToken = Cookies.get("accessToken");
-
-	var hasAuth = (accessToken && accessToken.length > 0) || tableau.password.length > 0;
-
-	if (hasAuth) {
-		$("#notsignedin").css('display', 'none');
-		$("#signedin").css('display', 'inline');
-		$("#getDataButton").prop("disabled",false);
-	} else {
-		$("#notsignedin").css('display', 'inline');
-		$("#signedin").css('display', 'none');
-		$("#getDataButton").prop("disabled",true);
-	}
-
-	if (tableau.phase == tableau.phaseEnum.interactivePhase || tableau.phase == tableau.phaseEnum.authPhase) {
-		if (hasAuth) {
-			tableau.initCallback();
-			tableau.password = accessToken;
-
-			return;
-		}
-	} else {
-		if (!hasAuth) {
-			tableau.abortWithError("Don't have an access token. Giving up");
-		}
-	}
-
-	tableau.initCallback();
-};
-console.log('here2');
-
-myConnector.getColumnHeaders = function() {
-	console.log('getColumHeaders');
-	
-	var fieldNames = ['firstName', 'middleName', 'lastName', 'lastUpdateTime', 'birthdate', 'postalCode', 'gender', 'height', 'weight'];
-    var fieldTypes = ['string', 'string', 'string', 'datetime', 'datetime', 'string', 'string', 'int', 'int'];
-
-  tableau.headersCallback(fieldNames, fieldTypes);
-};
-console.log('here3');
-
-myConnector.getTableData = function(lastRecordToken) {
-	console.log('in getTableData');
-	
-	if (lastRecordToken && lastRecordToken.length > 0) {
-		requestMSHProfileByUrl(lastRecordToken);
-	} else {
-	    var accessToken = tableau.password;
-	    requestMSHProfile(accessToken);	
-	}
-};
-console.log('here4');
-
-tableau.registerConnector(myConnector);
-console.log('here5');
-
 // Processes an individual item in the itemizations section adding in 
 // more fields to the rowData variable and rturning a collection of tableau rows
 // function processItem(item, rowData) {
@@ -171,7 +107,7 @@ function requestMSHProfile(accessToken) {
   		headers : {'Authorization': 'bearer ' + accessToken}
 	});
 
-    var url = 'https://api.microsofthealth.net/v1/me/Profile/';
+    var url = 'https://api.microsofthealth.net/v1/me/Activities/';
 
     requestMSHProfileByUrl(url);
 }
@@ -205,3 +141,65 @@ $(document).ready(function() {
 		$("#getDataButton").prop("disabled",true);
 	}
 });
+
+// -------------------------------------------------- //
+// WDC-specific things
+// -------------------------------------------------- //
+var myConnector = tableau.makeConnector();
+
+myConnector.init = function() {
+	console.log('init');
+	var accessToken = Cookies.get("accessToken");
+
+	var hasAuth = (accessToken && accessToken.length > 0) || tableau.password.length > 0;
+
+	if (hasAuth) {
+		$("#notsignedin").css('display', 'none');
+		$("#signedin").css('display', 'inline');
+		$("#getDataButton").prop("disabled",false);
+	} else {
+		$("#notsignedin").css('display', 'inline');
+		$("#signedin").css('display', 'none');
+		$("#getDataButton").prop("disabled",true);
+	}
+
+	if (tableau.phase == tableau.phaseEnum.interactivePhase || tableau.phase == tableau.phaseEnum.authPhase) {
+		if (hasAuth) {
+			tableau.initCallback();
+			tableau.password = accessToken;
+
+			return;
+		}
+	} else {
+		if (!hasAuth) {
+			tableau.abortWithError("Don't have an access token. Giving up");
+		}
+	}
+
+	tableau.initCallback();
+};
+
+
+myConnector.getColumnHeaders = function() {
+	console.log('getColumHeaders');
+	
+	var fieldNames = ['firstName', 'middleName', 'lastName', 'lastUpdateTime', 'birthdate', 'postalCode', 'gender', 'height', 'weight'];
+    var fieldTypes = ['string', 'string', 'string', 'datetime', 'datetime', 'string', 'string', 'int', 'int'];
+
+  tableau.headersCallback(fieldNames, fieldTypes);
+};
+
+
+myConnector.getTableData = function(lastRecordToken) {
+	console.log('in getTableData');
+	
+	if (lastRecordToken && lastRecordToken.length > 0) {
+		requestMSHProfileByUrl(lastRecordToken);
+	} else {
+	    var accessToken = tableau.password;
+	    requestMSHProfile(accessToken);	
+	}
+};
+
+
+tableau.registerConnector(myConnector);
