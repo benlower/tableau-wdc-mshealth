@@ -2,24 +2,26 @@
 
 Getting Started
 ---------------
-
- 1. Register your app with the Microsoft Account Developer Center.  Details for this are in the [MS Health API Docs](http://developer.microsoftband.com/Content/docs/MS%20Health%20API%20Getting%20Started.pdf#page=3&zoom=auto,69,540)
- 2. Create a file named config.js at the project root.  It will contain config info for your app including client ID and secret you'll get in step 1.  Config.js needs to look like the following:
+* Register your app with the Microsoft Account Developer Center.  Details for this are in the [MS Health API Docs](http://developer.microsoftband.com/Content/docs/MS%20Health%20API%20Getting%20Started.pdf#page=3&zoom=auto,69,540)
+* Create a file named config.js at the project root.  It will contain config info for your app including client ID and secret you'll get in step 1.  Config.js needs to look like the following:
  
 
->  module.exports = {
->  'HOSTPATH': 'http://localhost',
->  'PORT': 8080, 
-> 'MSHEALTH_CLIENT_ID': 'your_client_id', 
-> 'MSHEALTH_CLIENT_SECRET': 'your_client_secret', 
-> 'MSHEALTH_REDIRECT_URL': 'http://localhost:8080/redirect' };
+```
+module.exports = {
+ 'HOSTPATH': 'http://localhost',
+ 'PORT': 8080, 
+ 'MSHEALTH_CLIENT_ID': 'your_client_id', 
+ 'MSHEALTH_CLIENT_SECRET': 'your_client_secret', 
+ 'MSHEALTH_REDIRECT_URL': 'http://localhost:8080/redirect'
+};
+```
 
 You can change host, port, and redirect URL.  If you change these make sure you also change them in app.js.
  
- 3. Make sure you have Node.js installed
- 4. npm install
- 5. npm start
- 6. You can now use the WDC.  Note: you'll only get data if you use the WDC's [Simulator](http://onlinehelp.tableau.com/current/api/wdc/en-us/help.htm#WDC/wdc_simulator.htm%3FTocPath%3DWeb%2520Data%2520Connector%2520SDK|_____1) or Tableau Desktop
+* Make sure you have Node.js installed
+* npm install
+* npm start
+* You can now use the WDC.  Note: you'll only get data if you use the WDC's [Simulator](http://onlinehelp.tableau.com/current/api/wdc/en-us/help.htm#WDC/wdc_simulator.htm%3FTocPath%3DWeb%2520Data%2520Connector%2520SDK|_____1) or Tableau Desktop
 
 Current Limitations
 ---------------
