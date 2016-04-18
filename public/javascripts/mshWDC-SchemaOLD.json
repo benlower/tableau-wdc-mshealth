@@ -1,0 +1,51 @@
+/*
+Length              Centimeters (cm)
+Weight              Grams (g)
+Height              Millimeters (mm)
+Temperature         Celsius (°C)
+Time Duration       Timespan: P[n]DT[n]H[n]M[n]S
+Speed               Centimeters / second (cm/s)
+Pace                Milliseconds / meter (ms/m
+*/
+
+// Performance Summary
+/*
+"performanceSummary": {
+    "finishHeartRate": 152,
+    "recoveryHeartRateAt1Minute": 123,
+    "recoveryHeartRateAt2Minutes": 110,
+    "heartRateZones": {
+    "underAerobic": 1,
+    "aerobic": 5,
+    "anaerobic": 4,
+    "fitnessZone": 6,
+    "healthyHeart": 1,
+    "redline": 1
+}
+Property Name                   Type                    Description
+FinishHeartRate                 Object                  Heart rate when user finished the activity
+HeartRateZones                  Object                  Summary of heart rate zones, see HeartRate Zones                 
+RecoveryHeartRateAt1Minute      Duration                Heart rate at one minute after the activity is finished
+RecoveryHeartRateAt2Minutes     Long                    Heart rate at two minutes after the activity is finished
+
+
+
+
+// Distance Summary
+Property Name                   Type                    Description
+Period                          Object                  Length of time bucket; see Period
+TotalDistance                   Long                    Total distance in the period
+TotalDistanceOnFoot             Long                    Total distance covered on foot
+ActualDistance                  Long                    Absolute distance, including any paused time
+ElevationGain                   Int                     Cumulative elevation gain during the period
+ElevationLoss                   Int                     Cumulative elevation loss during the period
+MaxElevation                    Int                     Maximum elevation during the period
+MinElevation                    Int                     Minimum elevation during the period
+WayPointDistance                Long                    Distance in cm used to waypoint the GPS data
+Speed                           Int                     Total Period distance divided by period duration
+Pace                            Int                     Period duration divided by total period distance
+OverallPace                     Int                     Duration of all periods divided by distance of all periods
+
+*/
+
+

@@ -1,32 +1,32 @@
-function requestMSHProfileByUrl(url) {
-	$.getJSON(url, function(json, status, xhr) {
-		// TODO:  we've not yet implemented Paging
-// 		var stringRep = JSON.stringify(rows);
-// 
-// 		var pagingLink = xhr.getResponseHeader("Link");
-// 		var token = "";
-// 		if (pagingLink) {
-// 			stringRep = pagingLink.toString();
-// 			if (stringRep.length > 0) {
-// 				// TODO:  this is not implemented yet
-// 				token = stringRep.substring(1, stringRep.indexOf(">;rel='next'"));
-// 			}
-// 		}
+// function requestMSHProfileByUrl(url) {
+// 	$.getJSON(url, function(json, status, xhr) {
+// 		// TODO:  we've not yet implemented Paging
+// // 		var stringRep = JSON.stringify(rows);
+// // 
+// // 		var pagingLink = xhr.getResponseHeader("Link");
+// // 		var token = "";
+// // 		if (pagingLink) {
+// // 			stringRep = pagingLink.toString();
+// // 			if (stringRep.length > 0) {
+// // 				// TODO:  this is not implemented yet
+// // 				token = stringRep.substring(1, stringRep.indexOf(">;rel='next'"));
+// // 			}
+// // 		}
 
-  		tableau.dataCallback(flattenMSHData(json), token, token.length > 0);
-	}); 
-}
+//   		tableau.dataCallback(flattenMSHData(json), token, token.length > 0);
+// 	}); 
+// }
 
-function requestMSHProfile(accessToken) {
-    $.ajaxSetup({
-  		headers : {'Authorization': 'bearer ' + accessToken}
-	});
+// function requestMSHProfile(accessToken) {
+//     $.ajaxSetup({
+//   		headers : {'Authorization': 'bearer ' + accessToken}
+// 	});
 
-    var url = 'https://api.microsofthealth.net/v1/me/Activities/';
+//     var url = 'https://api.microsofthealth.net/v1/me/Activities/';
 
-    requestMSHProfileByUrl(url);
-}
-
+//     requestMSHProfileByUrl(url);
+// }
+(function() {
 // Use Moment to convert dates to acceptible format for Tableau
 function MSHDateToTableauDate(dateToConvert) {
 	// Use moment
@@ -37,14 +37,37 @@ function MSHDateToTableauDate(dateToConvert) {
 
 $(document).ready(function() {
 	var accessToken = Cookies.get("accessToken");
+	var hasAuth = accessToken && accessToken.length > 0;
+	updateUIWithAuthState(hasAuth);
+	
+	$("#mshconnectbutton").click(function() {
+		console.log('here');
+		doAuthRedirect();
+	});
 	
 	$("#getDataButton").click(function() {
 		tableau.connectionName = "MS Health Data";
 		tableau.submit();
 	});
+});
 
-	var hasAuth = accessToken && accessToken.length > 0;
+// This will redirect the user to MS Health login
+function doAuthRedirect() {
+	// TODO:  figure out how to use cookies here
+	var clientID = Cookies.get("clientId");
+	clientID = "000000004015C284";
 
+	console.log('client id: ' + clientID);
+	var urlParams = "?client_id=" + clientID + "&scope=mshealth.ReadProfile%20mshealth.ReadActivityHistory%20mshealth.ReadDevices%20mshealth.ReadActivityLocation&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fredirect";
+	// var urlParams = "?client_id=" + clientID + "&scope=mshealth.ReadProfile&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fredirect";
+	var url = Cookies.get("authUrl") + urlParams;
+	
+	url = "https://login.live.com/oauth20_token.srf" + urlParams;
+	console.log('redirecting to: ' + url);
+	window.location.href = url;
+}
+
+function updateUIWithAuthState(hasAuth) {
 	if (hasAuth) {
 		$("#notsignedin").css('display', 'none');
 		$("#signedin").css('display', 'inline');
@@ -54,8 +77,7 @@ $(document).ready(function() {
 		$("#signedin").css('display', 'none');
 		$("#getDataButton").prop("disabled",true);
 	}
-});
-
+}
 
 // Use Moment to convert an ISO 8061 Duration to HH:mm:ss format for Tableau
 function durationToString(duration) {
@@ -63,7 +85,6 @@ function durationToString(duration) {
   
   return momentDuration.hours() + ":" + momentDuration.minutes() + ":" + momentDuration.seconds();
 }
-
 
 function flattenMSHData(data) {
   var i;
@@ -96,8 +117,6 @@ function flattenMSHData(data) {
   
   return ret;
 }
-
-
 
 // -------------------------------------------------------------------------------- //
 // MS Health Activities
@@ -134,31 +153,35 @@ function processMSHActivity(activity, activityType) {
 	return activityRow;
 }
 
-
 // -------------------------------------------------- //
 // WDC-specific things
 // -------------------------------------------------- //
 var myConnector = tableau.makeConnector();
 
-myConnector.init = function() {
-	var accessToken = Cookies.get("accessToken");
-
-	var hasAuth = (accessToken && accessToken.length > 0) || tableau.password.length > 0;
-
-	if (hasAuth) {
-		$("#notsignedin").css('display', 'none');
-		$("#signedin").css('display', 'inline');
-		$("#getDataButton").prop("disabled",false);
-	} else {
-		$("#notsignedin").css('display', 'inline');
-		$("#signedin").css('display', 'none');
-		$("#getDataButton").prop("disabled",true);
+myConnector.init = function(initCallback) {
+	tableau.authType = tableau.authTypeEnum.custom;
+	
+	// Show UI for auth only if we're in auth phase
+	if (tableau.phase == tableau.phaseEnum.authPhase) {
+		$("#getDataButton").css('display', 'none');
 	}
-
+	
+	var accessToken = Cookies.get("accessToken");
+	console.log('Access token: ' + accessToken);
+	
+	var hasAuth = (accessToken && accessToken.length > 0) || tableau.password.length > 0;
+	updateUIWithAuthState(hasAuth);
+	
+	initCallback();
+	
 	if (tableau.phase == tableau.phaseEnum.interactivePhase || tableau.phase == tableau.phaseEnum.authPhase) {
 		if (hasAuth) {
-			tableau.initCallback();
 			tableau.password = accessToken;
+			
+			if (tableau.phase == tableau.phaseEnum.authPhase) {
+				// auto-submit here if we are in the auth phase
+				tableau.submit();
+			}
 
 			return;
 		}
@@ -167,31 +190,51 @@ myConnector.init = function() {
 			tableau.abortWithError("Don't have an access token. Giving up");
 		}
 	}
-
-	tableau.initCallback();
 };
 
+myConnector.getSchema = function(schemaCallback) {
+	// Get our schema from a local JSON file
+	$.getJSON("./javascripts/mshWDC-Schema.json", function(schemaJson) {
+		schemaCallback(schemaJson);
+	});
+};
 
-myConnector.getColumnHeaders = function() {
-	var fieldNames = ['activityType', 'activityID', 'activityCaloriesBurned', 'activityDistance', 'activityDuration', 'activityStart', 'activityEnd', 'activityHRAvg', 'activityHRPeak', 'activityHRLow', 'activityHREnding'];
-    var fieldTypes = ['string', 'string', 'int', 'int', 'datetime', 'datetime', 'datetime', 'int', 'int', 'int', 'int'];	
+myConnector.getData = function(table, doneCallback) {
+	console.log('our cookie: ' + Cookies.get("accessToken"));
 	
-  tableau.headersCallback(fieldNames, fieldTypes);
+	$.ajaxSetup({
+		headers : {'Authorization': 'bearer ' + accessToken}
+	});
+	console.log('access token: ' + accessToken);
+
+	var url = 'https://api.microsofthealth.net/v1/me/Activities/';
+	var activity = '';
+	
+	switch (table.tableInfo.id) {
+		case "bikeActivity":
+			activity = "Bike";
+			break;
+			
+		case "runActivity":
+			activity = "Run";
+			break;
+	
+		default:
+			activity = "FreePlay";
+			break;
+	};
+	
+	url += "?activityTypes=" + activity + "&maxPageSize=1000";
+	
+	$.getJSON(url, function(json, status, xhr) {
+		table.appendRows(flattenMSHData(json));
+		doneCallback();
+		//tableau.dataCallback(flattenMSHData(json), token, token.length > 0);
+	});
 };
-
-
-myConnector.getTableData = function(lastRecordToken) {
-	if (lastRecordToken && lastRecordToken.length > 0) {
-		requestMSHProfileByUrl(lastRecordToken);
-	} else {
-	    var accessToken = tableau.password;
-	    requestMSHProfile(accessToken);	
-	}
-};
-
 
 tableau.registerConnector(myConnector);
-
+})();
 
 // MS Health Data Properties (available)
 

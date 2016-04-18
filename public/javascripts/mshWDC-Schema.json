@@ -1,0 +1,54 @@
+[
+    {
+        "alias": "Run Activity",
+        "id": "runActivity",
+        "columns": [
+            { "id": "activityType", "dataType": "string" },
+            { "id": "activityID", "dataType": "string" },
+            { "id": "activityCaloriesBurned", "dataType": "int" },
+            { "id": "activityDistance", "dataType": "int" },
+            { "id": "activityDuration", "dataType": "string" },
+            { "id": "activityStart", "dataType": "date_time" },
+            { "id": "activityEnd", "dataType": "date_time" },
+            { "id": "activityHRAvg", "dataType": "int" },
+            { "id": "activityHRPeak", "dataType": "int" },
+            { "id": "activityHRLow", "dataType": "int" },
+            { "id": "activityHREnding", "dataType": "int" }
+        ]
+    },
+    {
+        "alias": "Bike Activity",
+        "id": "bikeActivity",
+        "columns": [
+            { "id": "activityType", "dataType": "string" },
+            { "id": "activityID", "dataType": "string" },
+            { "id": "activityCaloriesBurned", "dataType": "int" },
+            { "id": "activityDistance", "dataType": "int" },
+            { "id": "activityDuration", "dataType": "string" },
+            { "id": "activityStart", "dataType": "date_time" },
+            { "id": "activityEnd", "dataType": "date_time" },
+            { "id": "activityHRAvg", "dataType": "int" },
+            { "id": "activityHRPeak", "dataType": "int" },
+            { "id": "activityHRLow", "dataType": "int" },
+            { "id": "activityHREnding", "dataType": "int" }
+        ]
+    },
+    {
+        "alias": "Free Play Activity",
+        "id": "freePlayActivity",
+        "columns": [
+            { "id": "activityType", "dataType": "string" },
+            { "id": "activityID", "dataType": "string" },
+            { "id": "activityCaloriesBurned", "dataType": "int" },
+            { "id": "activityDistance", "dataType": "int" },
+            { "id": "activityDuration", "dataType": "string" },
+            { "id": "activityStart", "dataType": "date_time" },
+            { "id": "activityEnd", "dataType": "date_time" },
+            { "id": "activityHRAvg", "dataType": "int" },
+            { "id": "activityHRPeak", "dataType": "int" },
+            { "id": "activityHRLow", "dataType": "int" },
+            { "id": "activityHREnding", "dataType": "int" }
+        ]
+    }
+    
+]

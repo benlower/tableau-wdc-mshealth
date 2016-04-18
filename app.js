@@ -7,10 +7,8 @@ var querystring = require('querystring');
 var http = require('http');
 var request = require('request');
 var path = require('path');
-var config = require('./config.js');              // Get our config info (app id and app secret)
+var config = require('./config_private.js');              // Get our config info (app id and app secret)
 var sys = require('util');
-
-
 var app = express();
 
 
@@ -85,6 +83,8 @@ app.get('/redirect', function(req, res) {
       // console.log('accessToken: ' + accessToken);
       
       res.cookie('accessToken', accessToken, { });
+      res.cookie('clientId', _mshAppID, { });
+      res.cookie('authUrl', options.url, { });
       res.redirect('/mshWDC.html');
     } else {
       console.log(error);
